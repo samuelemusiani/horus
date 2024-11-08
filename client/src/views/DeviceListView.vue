@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-screen w-screen items-center">
-    <main class="flex flex-col h-full justify-center items-center gap-20">
+    <main class="flex flex-col w-full h-full justify-center items-center gap-2">
       <DeviceComponent v-for="device in devices" :key="device.id" :device="device" />
     </main>
   </div>
