@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import subprocess
+from lib import fast_network_scan, run_vuln_scan, get_hosts
+
+scanning = False
+fast_scanned = False
 
 app = FastAPI()
 
@@ -16,9 +20,22 @@ app.add_middleware(
 
 @app.get("/start")
 def start_scan():
-    # start the scan
-    return {"message": "Scan started"}
-  
+    if scanning:
+        return get_hosts()
+
+    scanning = True
+
+    # Start the scan
+    fast_network_scan('192.168.1.0/24')
+
+    # Get the list of hosts
+    discovered_hosts = get_hosts()
+
+    # Run vulnerability scan on each host
+    for host in discovered_hosts:
+        run_vuln_scan(host['ip'])
+
+    return {"message": "End"}
 
 @app.get("/isonline/{ip}")
 def is_online(ip: str):
