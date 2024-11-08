@@ -19,7 +19,6 @@ import AuroraBackground from "@/components/AuroraBackground.vue";
 export default {
   components: {
     AuroraBackground,
-    Meteors,
   },
   data() {
     return {
