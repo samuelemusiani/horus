@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.11",
     "oh-vue-icons": "^1.0.0-rc3",
