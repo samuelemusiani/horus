@@ -1,19 +1,26 @@
 <template>
-  <div class="flex flex-col h-screen w-screen items-center">
+  <AuroraBackground class="flex flex-col h-screen w-screen items-center">
     <main class="flex flex-col h-full justify-center items-center gap-20">
       <div class="flex items-center justify-center gap-4">
-        <img :src="eyeIcon" alt="icon" class="w-20 h-20">
-      <h1 class="text-5xl font-black">Horus</h1>
+        <img :src="eyeIcon" alt="icon" class="w-28 h-28">
+        <h1 class="text-6xl font-black">Horus</h1>
       </div>
-    <button class="bg-black rounded-r-full rounded-l-full text-white px-10 py-3 mt-20 pulse font-bold text-lg">Start Scan</button>
+      <button class="bg-black rounded-r-full rounded-l-full text-white px-10 py-4 mt-20 pulse font-bold text-xl">Start
+        Scan
+      </button>
     </main>
-  </div>
+  </AuroraBackground>
 </template>
 
 <script>
 import eyeIcon from '@/assets/eye_icon.png';
+import AuroraBackground from "@/components/AuroraBackground.vue";
 
 export default {
+  components: {
+    AuroraBackground,
+    Meteors,
+  },
   data() {
     return {
       eyeIcon,
