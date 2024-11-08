@@ -1,8 +1,12 @@
 <template>
-  <div class="flex flex-col h-screen w-screen items-center">
-    <main class="flex flex-col w-full h-full justify-center items-center gap-2">
-      <DeviceComponent v-for="device in devices" :key="device.id" :device="device" />
+  <div class="w-screen flex flex-col items-center">
+    <div class="flex flex-col h-screen w-screen items-center max-w-5xl p-4">
+      <h1 class="mt-10 text-4xl w-full font-black">Report</h1>
+      <h1 class="text-4xl w-full font-black mt-10">Found devices</h1>
+      <main class="flex flex-col w-full h-full items-center gap-2 mt-6">
+      <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" />
     </main>
+  </div>
   </div>
 </template>
 
@@ -23,7 +27,7 @@ export default {
           mac: "00:1A:2B:3C:4D:5E",
           services: [
             { port: 80, ifVulnerable: false, name: "HTTP" },
-            { port: 22, ifVulnerable: true, name: "SSH" }
+            { port: 22, ifVulnerable: false, name: "SSH" }
           ]
         },
         {
@@ -32,13 +36,22 @@ export default {
           ip: "192.168.1.2",
           mac: "00:1A:2B:3C:4D:5F",
           services: [
-            { port: 443, ifVulnerable: false, name: "HTTPS" },
-            { port: 21, ifVulnerable: true, name: "FTP" }
+            { port: 443, ifVulnerable: true, name: "HTTPS" },
+            { port: 21, ifVulnerable: false, name: "FTP" }
           ]
         }
       ]
     }
   },
+  computed: {
+    sortedDevices() {
+      return this.devices.sort((a, b) => {
+      const aVulnerable = a.services.some(service => service.ifVulnerable);
+      const bVulnerable = b.services.some(service => service.ifVulnerable);
+      return bVulnerable - aVulnerable;
+      });
+    }
+  }
 };
 
 </script>
