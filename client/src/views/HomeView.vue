@@ -35,13 +35,14 @@ export default {
     return {
       eyeIcon,
       networkName: "Network Name",
-      displayLoader: false
+      displayLoader: false,
+      router: useRouter()
     };
   },
   methods: {
     async scanFetcher() {
         const response = await axios.get("http://localhost:8000/scan")
-        response.data.scan !== "[]" ? await useRouter().push("/list") : setTimeout(() => this.scanFetcher(), 2000);
+        response.data.scan !== "[]" ? await router.push("/list") : setTimeout(() => this.scanFetcher(), 2000);
     },
     startScan() {
       axios.post("http://localhost:8000/start")

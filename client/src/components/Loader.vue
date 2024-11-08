@@ -64,7 +64,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .loader {
   width: 60px;
   height: 60px;
