@@ -1,31 +1,43 @@
 <template>
-  <AuroraBackground class="flex flex-col h-screen w-screen items-center">
-    <main class="flex flex-col h-full justify-center items-center gap-20">
+  <div class="h-screen w-screen">
+    <main class="flex flex-col h-full justify-center items-center gap-20 p-10">
       <div class="flex items-center justify-center gap-4">
         <img :src="eyeIcon" alt="icon" class="w-28 h-28">
         <h1 class="text-6xl font-black">Horus</h1>
       </div>
-      <button class="bg-black rounded-r-full rounded-l-full text-white px-10 py-4 mt-20 pulse font-bold text-xl">Start
-        Scan
+      <div class="flex justify-center items-center gap-2 px-6 py-2 rounded-r-full rounded-l-full bg-gray-500 text-white">
+        <v-icon id="wifi-icon" name="io-wifi" scale="1.75"/>
+        <h3 class="text-xl"> {{ networkName }} </h3>
+      </div>
+      <button class="bg-black rounded-r-full rounded-l-full text-white px-10 py-4 mt-20 pulse font-bold text-xl" @click.stop="startScan">
+        Start Scan
       </button>
     </main>
-  </AuroraBackground>
+    <Loader :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
+  </div>
 </template>
 
 <script>
 import eyeIcon from '@/assets/eye_icon.png';
 import AuroraBackground from "@/components/AuroraBackground.vue";
+import Loader from "@/components/Loader.vue";
 
 export default {
   components: {
     AuroraBackground,
-    Meteors,
+    Loader
   },
   data() {
     return {
       eyeIcon,
+      networkName: "Network Name",
     };
   },
+  methods: {
+    startScan() {
+      document.querySelector("main").remove();
+    }
+  }
 };
 
 </script>
