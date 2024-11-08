@@ -1,6 +1,7 @@
 <template>
   <div class="h-screen w-screen">
-    <main class="flex flex-col h-full justify-center items-center gap-20 p-10">
+    <!--<AuroraBackground/>-->
+    <main id="main" class="flex flex-col h-full justify-center items-center gap-20 p-10 z-10">
       <div class="flex items-center justify-center gap-4">
         <img :src="eyeIcon" alt="icon" class="w-28 h-28">
         <h1 class="text-6xl font-black">Horus</h1>
@@ -9,11 +10,11 @@
         <v-icon id="wifi-icon" name="io-wifi" scale="1.75"/>
         <h3 class="text-xl"> {{ networkName }} </h3>
       </div>
-      <button class="bg-black rounded-r-full rounded-l-full text-white px-10 py-4 mt-20 pulse font-bold text-xl" @click.stop="startScan">
+      <button class="hover:cursor-pointer bg-black rounded-r-full rounded-l-full text-white px-10 py-4 mt-20 pulse font-bold text-xl" @click.stop="startScan">
         Start Scan
       </button>
     </main>
-    <Loader :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
+    <Loader v-if="displayLoader" :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
   </div>
 </template>
 
@@ -31,11 +32,14 @@ export default {
     return {
       eyeIcon,
       networkName: "Network Name",
+      displayLoader: false
     };
   },
   methods: {
     startScan() {
-      document.querySelector("main").remove();
+      console.log("Scanning network...");
+      document.querySelector("#main").remove();
+      this.displayLoader = true;
     }
   }
 };
