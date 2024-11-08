@@ -1,14 +1,24 @@
 <template>
-  <div class="w-screen flex flex-col items-center">
-    <div class="flex flex-col h-screen w-screen items-center max-w-5xl p-4">
+
+  <div class="w-screen flex flex-col items-center pb-8">
+    <div class="flex flex-col w-screen items-center max-w-5xl p-4">
       <div v-if="isScanning">
         <Loader />
         <p>Scan is still ongoing</p>
       </div>
-      <h1 class="mt-10 text-4xl w-full font-black">Report</h1>
-      <h1 class="text-4xl w-full font-black mt-10">Found devices</h1>
-      <main class="flex flex-col w-full h-full items-center gap-2 mt-6">
-        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device"/>
+      <div class="flex w-full mt-10 items-end">
+        <h1 class=" text-4xl font-black">Report</h1>
+        <hr>
+      </div>
+      <div class="flex w-full gap-4">
+        <ReportComponent :devices="devices" />
+      </div>
+      <div class="flex w-full mt-12 items-end">
+        <h1 class="flex-2 text-4xl font-black">Found devices</h1>
+        <hr class="flex-1">
+      </div>
+      <main class="flex flex-col w-full h-full items-center gap-2 mt-8">
+        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" />
       </main>
     </div>
   </div>
@@ -18,11 +28,13 @@
 import DeviceComponent from "@/components/DeviceComponent.vue";
 import axios from "axios";
 import Loader from "@/components/Loader.vue";
+import ReportComponent from "@/components/ReportComponent.vue";
 
 export default {
   components: {
     Loader,
     DeviceComponent,
+    ReportComponent
   },
   data() {
     return {
@@ -69,8 +81,16 @@ export default {
   0% {
     box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
   }
+
   100% {
     box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
   }
+}
+
+hr {
+  border: 1px solid black;
+  margin-bottom: 0.4em;
+  margin-left: 0.5em;
+  width: 100%;
 }
 </style>
