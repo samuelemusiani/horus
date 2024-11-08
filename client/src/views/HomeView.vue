@@ -14,7 +14,7 @@
         Start Scan
       </button>
     </main>
-    <Loader v-if="displayLoader" class="absolute inset-0 flex flex-col h-full justify-center items-center gap-20 p-10 z-10" :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
+    <Loader v-if="displayLoader" class="absolute w-full inset-0 flex flex-col h-full justify-center items-center gap-20 p-10 z-10" :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
   </div>
 </template>
 
@@ -22,6 +22,9 @@
 import eyeIcon from '@/assets/eye_icon.png';
 import AuroraBackground from "@/components/AuroraBackground.vue";
 import Loader from "@/components/Loader.vue";
+import axios from "axios";
+import router from "@/router/index.js";
+import {useRouter} from "vue-router";
 
 export default {
   components: {
@@ -36,11 +39,25 @@ export default {
     };
   },
   methods: {
+    async scanFetcher() {
+        const response = await axios.get("http://localhost:8000/scan")
+        response.data.scan !== "[]" ? await useRouter().push("/list") : setTimeout(() => this.scanFetcher(), 2000);
+    },
     startScan() {
-      console.log("Scanning network...");
+      axios.post("http://localhost:8000/start")
       document.querySelector("#main").remove();
       this.displayLoader = true;
+      setTimeout(() => this.scanFetcher(), 2000);
     }
+  },
+  mounted() {
+    axios.get("http://localhost:8000/ssid")
+      .then(response => {
+        this.networkName = response.data;
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 };
 
