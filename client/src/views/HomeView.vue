@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen w-screen">
-    <!--<AuroraBackground/>-->
-    <main id="main" class="flex flex-col h-full justify-center items-center gap-20 p-10 z-10">
+    <AuroraBackground/>
+    <main id="main" class="absolute inset-0 flex flex-col h-full justify-center items-center gap-20 p-10 z-10">
       <div class="flex items-center justify-center gap-4">
         <img :src="eyeIcon" alt="icon" class="w-28 h-28">
         <h1 class="text-6xl font-black">Horus</h1>
@@ -14,7 +14,7 @@
         Start Scan
       </button>
     </main>
-    <Loader v-if="displayLoader" :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
+    <Loader v-if="displayLoader" class="absolute inset-0 flex flex-col h-full justify-center items-center gap-20 p-10 z-10" :messages="['Scanning network...', 'Detecting devices...', 'Analyzing vulnerabilities...']"/>
   </div>
 </template>
 
