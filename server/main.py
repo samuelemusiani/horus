@@ -5,6 +5,7 @@ import subprocess
 
 app = FastAPI()
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -12,6 +13,12 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+@app.get("/start")
+def start_scan():
+    # start the scan
+    return {"message": "Scan started"}
+  
 
 @app.get("/isonline/{ip}")
 def is_online(ip: str):
