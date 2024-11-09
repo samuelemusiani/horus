@@ -21,27 +21,31 @@ app.add_middleware(
 
 global scan, is_scanning
 is_scanning = False
-scan = [{"ip": "127.0.0.1", "mac": "00:00:00:00:00:00", "services": []}, {"ip": "192.168.0.3", "mac": "00:00:00:00:00:00", "services": []}]
+scan = []
 # scan = []
 
 
 @app.post("/start")
 def start_scan():
     # start the scan
-    global is_scanning
+    global is_scanning, scan
     if is_scanning:
         return {"status": "error", "message": "Already scanning"}
     is_scanning = True
     # Start the scan
-    fast_network_scan('192.168.1.0/24')
+    fast_network_scan('172.23.0.0/25')
 
     # Get the list of hosts
-    discovered_hosts = get_hosts()
+    tmp = get_hosts()
+    scan = tmp
+    print("Host getted: ", get_hosts())
 
     # Run vulnerability scan on each host
-    for host in discovered_hosts:
+    for host in tmp:
         run_vuln_scan(host['ip'])
+        scan = get_hosts()
 
+    is_scanning = False
     return {"message": "End"}
 
 
@@ -60,9 +64,9 @@ def get_ssid():
             ssid = result.stdout.strip()
             return ssid if ssid else "Could not find SSID"
         else:
-            return None
+            return "Ethernet"
     except Exception as e:
-        return None
+        return "Ethernet"
 
 @app.get("/isonline/{ip}")
 def is_online(ip: str):
@@ -77,4 +81,4 @@ def is_online(ip: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

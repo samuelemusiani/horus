@@ -13,14 +13,14 @@
         <hr>
       </div>
       <div class="flex w-full gap-4">
-        <ReportComponent :devices="devices"/>
+        <ReportComponent :devices="devices" />
       </div>
       <div class="flex w-full mt-12 items-end">
         <h1 class="flex-2 text-4xl font-black">Found devices</h1>
         <hr class="flex-1">
       </div>
       <main class="flex flex-col w-full h-full items-center gap-2 mt-8">
-        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device"/>
+        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" />
       </main>
     </div>
   </div>
@@ -49,6 +49,7 @@ export default {
   },
   watch: {
     isScanning(newValue) {
+      console.log(newValue)
       if (newValue) {
         setTimeout(() => this.getScan(), 2000);
       }
@@ -59,6 +60,9 @@ export default {
       const response = await axios.get("http://localhost:8000/scan");
       this.isScanning = response.data.status;
       this.devices = JSON.parse(response.data.scan);
+      if (this.isScanning) {
+        setTimeout(() => this.getScan(), 2000);
+      }
     }
   },
   computed: {
