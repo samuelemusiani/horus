@@ -4,6 +4,9 @@ import subprocess
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from langchain_ollama import ChatOllama
+from typing import List, Tuple
+
 from lib import fast_network_scan, run_vuln_scan, get_hosts
 
 scanning = False
@@ -74,6 +77,24 @@ def is_online(ip: str):
             return {"status": "offline"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+    
+@app.post("/chat")
+def chat(messages: List[Tuple[str, str]]):
+    llm = ChatOllama(model="llama3.2", temperature=0)
+
+    messages = [(
+        "system",
+        "You are a helpful assistant that provides explanations of network vulnerabilities to a non-technical user. Only answer questions.",
+    )] + messages
+
+    if messages[len(messages) - 1][0] == "user" and not messages[len(messages) - 1][1].endswith(" Short answer."):
+        messages[len(messages) - 1] = ("user", messages[len(messages) - 1][1] + ". Short answer.")
+
+    print(messages)
+
+    ai_msg = llm.invoke(messages)
+    return ai_msg.content
+
 
 
 if __name__ == "__main__":

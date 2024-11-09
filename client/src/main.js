@@ -7,17 +7,11 @@ import App from './App.vue'
 import router from './router'
 
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import {
-    IoWifi,
-    BiCheckCircle,
-    MdError,
-    BiCheckCircleFill,
-    MdExpandmoreRound,
-    MdSearch,
-    MdCable
-} from "oh-vue-icons/icons";
+import {IoCloseCircle, IoWifi, BiCheckCircle, MdError, 
+    MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck, MdCable} from "oh-vue-icons/icons";
 
-addIcons(IoWifi, BiCheckCircle, MdError, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdCable);
+addIcons(IoCloseCircle, IoWifi, BiCheckCircle, MdError,
+    MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck, MdCable);
 
 const app = createApp(App)
 app.component("v-icon", OhVueIcon);
