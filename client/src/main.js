@@ -7,10 +7,10 @@ import App from './App.vue'
 import router from './router'
 
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import {IoCloseCircle, IoWifi, BiCheckCircle, MdError, 
+import {IoCloseCircle, IoWifi, BiCheckCircle, MdError, HiDocumentDownload,
     MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck, MdCable} from "oh-vue-icons/icons";
 
-addIcons(IoCloseCircle, IoWifi, BiCheckCircle, MdError,
+addIcons(IoCloseCircle, IoWifi, BiCheckCircle, MdError, HiDocumentDownload,
     MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck, MdCable);
 
 const app = createApp(App)
