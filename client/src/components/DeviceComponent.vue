@@ -3,36 +3,46 @@
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center">
         <v-icon :class="[{ '-rotate-90': !expanded }, 'hover:cursor-pointer']" name="md-expandmore-round" scale="1.5"
-          fill="gray" class="mr-2" @click.stop="expanded = !expanded" />
-        <v-icon v-if="isVulnerable" name="md-error" fill="red" scale="1.5" />
-        <v-icon v-else name="bi-check-circle-fill" fill="green" scale="1.5" />
+                fill="gray" class="mr-2" @click.stop="expanded = !expanded"/>
+        <v-icon v-if="isVulnerable" name="md-error" fill="red" scale="1.5"/>
+        <v-icon v-else name="bi-check-circle-fill" fill="green" scale="1.5"/>
         <h2 class="text-2xl font-bold text-gray-900 mx-2">{{ device.name }}</h2>
       </div>
       <div class="flex gap-2 items-center">
-        <p class="text-gray-700 "><strong>IP:</strong> {{ device.ip }}</p>
-        <button @click="openModal" class="bg-blue-500 text-white px-4 py-2 rounded items-center flex">Find My Device
-          <v-icon name="md-search" scale="1.5" class="ml-2" />
+        <button @click="openModal" class="bg-blue-500 text-white pl-2 pr-4 py-2 rounded-lg items-center flex">
+          <v-icon name="md-search" scale="1.5" class="mr-2"/>
+          Find
         </button>
       </div>
     </div>
     <div v-if="expanded">
-      <p class="text-gray-700 mt-3 ml-2"><strong>MAC:</strong> {{ device.mac }}</p>
-      <ul class="flex gap-2 mt-3">
+      <div class="flex w-full gap-4 mt-3 ml-1">
+        <p class="text-gray-700"><strong>IP:</strong> {{ device.ip }}</p>
+        <p class="text-gray-700"><strong>MAC:</strong> {{ device.mac }}</p>
+      </div>
+      <ul class="flex gap-2 mt-3 flex-wrap">
         <li v-for="(service, index) in sortedServices" :key="index"
-          :class="['px-4 py-2 rounded-lg mb-2', service.ifVulnerable ? 'bg-red-100' : 'bg-green-50']">
-          <p class="text-gray-800"><strong>Service:</strong> {{ service.name }}</p>
-          <p class="text-gray-800"><strong>Version:</strong> {{ service.version }}</p>
-          <p class="text-gray-800"><strong>Port:</strong> {{ service.port }}</p>
-          <p class="text-gray-800"><strong>Vulnerable:</strong> {{ service.ifVulnerable ? 'Yes' : 'No' }}</p>
+            :class="['px-4 py-2 rounded-lg mb-2 flex', service.ifVulnerable ? 'bg-red-100' : 'bg-green-50']">
+          <div>
+            <p class="text-gray-800"><strong>Service:</strong> {{ service.name }}</p>
+            <p class="text-gray-800"><strong>Version:</strong> {{ service.version }}</p>
+            <p class="text-gray-800"><strong>Port:</strong> {{ service.port }}</p>
+            <p class="text-gray-800"><strong>Vulnerable:</strong> {{ service.ifVulnerable ? 'Yes' : 'No' }}</p>
+          </div>
+          <div class="ml-8 flex flex-col items-center justify-center">
+            <button :class="[service.ifVulnerable ? 'bg-red-400' : 'bg-green-400', 'p-3 rounded-lg']" @click="openChat(service)">
+              <v-icon name="md-questionanswer" fill="white"/>
+            </button>
+          </div>
         </li>
       </ul>
     </div>
     <ModalComponent v-if="showModal" @close="closeModal">
       <template v-slot:header>
-        <h3 class="text-lg">Find The Device (IP: {{ device.ip }})</h3>
+        <h3 class="text-lg font-bold text-gray-700">Find The Device (IP: {{ device.ip }})</h3>
       </template>
       <template v-slot:body>
-        <Loader :messages="['Contacting the server...']" class="w-full py-16" v-if="loading" />
+        <Loader :messages="['Contacting the server...']" class="w-full py-16" v-if="loading"/>
         <div v-else>
           <ol class="list-decimal list-inside space-y-2">
             <li>Make a list of all the devices that could potentially be the one you're looking for.</li>
@@ -41,11 +51,18 @@
             <li>If the device is still found, go back to step 2 and try disconnecting another device.</li>
             <li>Continue this process until the scan feature says it's no longer online in the results.</li>
           </ol>
-          <button @click="scanDevice" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Scan</button>
-          <p v-if="scanResult" class="mt-4">Scan Result: <span
-              :class="[scanResult === 'offline' ? 'text-emerald-500' : 'text-red-500', 'font-bold', 'text-lg']">{{
+          <div class="flex gap-2 align-center">
+            <button @click="scanDevice" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">
+              <v-icon name="md-networkcheck" fill="white"/>
+              Scan
+            </button>
+            <div v-if="scanResult"
+                 :class="[scanResult === 'offline' ? 'text-emerald-500': 'text-red-500', 'mt-4 bg-gray-200 px-4 py-2 rounded']">
+              Scan Result: <span
+                :class="['font-bold', 'text-lg']">{{
                 scanResult
-              }}</span></p>
+              }}</span></div>
+          </div>
         </div>
       </template>
       <template v-slot:footer>
@@ -61,6 +78,7 @@ import axios from "axios";
 import Loader from "@/components/Loader.vue";
 
 export default {
+  emits: ['open-chat'],
   components: {
     Loader,
     ModalComponent
@@ -71,16 +89,16 @@ export default {
       required: true,
       validator: (value) => {
         return (
-          value.name &&
-          value.ip &&
-          value.mac &&
-          Array.isArray(value.services) &&
-          value.services.every(service =>
-            service.port &&
-            service.ifVulnerable !== undefined &&
-            service.name &&
-            service.version
-          )
+            value.name &&
+            value.ip &&
+            value.mac &&
+            Array.isArray(value.services) &&
+            value.services.every(service =>
+                service.port &&
+                service.ifVulnerable !== undefined &&
+                service.name &&
+                service.version
+            )
         );
       }
     }
@@ -99,7 +117,7 @@ export default {
     },
     sortedServices() {
       return this.device.services.sort((a, b) => b.ifVulnerable - a.ifVulnerable);
-    }
+    },
   },
   methods: {
     openModal() {
@@ -118,6 +136,9 @@ export default {
         this.scanResult = 'error';
       }
       this.loading = false;
+    },
+    openChat(service) {
+      this.$emit('open-chat', service);
     }
   }
 };
