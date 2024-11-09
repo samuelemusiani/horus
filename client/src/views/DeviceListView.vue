@@ -24,7 +24,8 @@
       </main>
     </div>
   </div>
-  <ChatComponent v-if="showChat" :initial-message="initialMessage" style="position: fixed; bottom: 20px; right: 20px;" @close="closeChat" />
+  <ChatComponent v-if="showChat" :initial-message="initialMessage" style="position: fixed; bottom: 20px; right: 20px;"
+                 @close="closeChat"/>
 </template>
 
 <script>
@@ -44,7 +45,7 @@ export default {
   data() {
     return {
       showChat: false,
-      initialMessage: []
+      initialMessage: [],
       devices: [],
       isScanning: false
     }
@@ -66,15 +67,15 @@ export default {
       this.devices = JSON.parse(response.data.scan);
       if (this.isScanning)
         setTimeout(() => this.getScan(), 2000);
-    }
-    openChat(service){
+    },
+    openChat(service) {
       this.initialMessage = ['user', `Explain to me what ${service.name} is.`];
       this.showChat = true;
     },
-    closeChat(){
+    closeChat() {
       this.showChat = false;
-  }
-},
+    }
+  },
   computed: {
     sortedDevices() {
       return this.devices.sort((a, b) => {
