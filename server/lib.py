@@ -36,16 +36,14 @@ def fast_network_scan(network: str) -> None:
         
         # Initialize host entries
         for host in scanner.all_hosts():
+            print("host: ", host)
             if scanner[host].state() == 'up':
                 host_entry = {
                     'ip': host,
-                    'hostname': scanner[host].hostname() or 'unknown',
-                    'state': 'up',
+                    'name': scanner[host].hostname() or 'unknown',
+                    'mac': scanner[host]['addresses']['mac'] or 'unknown',
                     'scan_time': datetime.now().isoformat(),
-                    'vulnerabilities': [],
-                    'open_ports': [],
-                    'vuln_scan_completed': False,
-                    'host_scripts': []
+                    'services': [],
                 }
                 hosts.append(host_entry)
                 
@@ -88,9 +86,9 @@ def run_vuln_scan(target: str, ports: str = None) -> None:
         
         # Find the host entry in our global hosts list
         global hosts
-        host_entry = next((host for host in hosts if host['ip'] == target), None)
+        host_index = next((index for index, host in enumerate(hosts) if host['ip'] == target), None)
         
-        if not host_entry:
+        if host_index is None:
             print(f"[!] Host {target} not found in scanned hosts list")
             return
         
@@ -98,51 +96,37 @@ def run_vuln_scan(target: str, ports: str = None) -> None:
         if target in scanner.all_hosts():
             host_data = scanner[target]
             
-            # Reset vulnerability and port lists
-            host_entry['vulnerabilities'] = []
-            host_entry['open_ports'] = []
-            host_entry['vuln_scan_completed'] = True
-            host_entry['last_vuln_scan'] = datetime.now().isoformat()
+            # Create new services list for this scan
+            new_services = []
             
             # Collect port and vulnerability information
             for proto in host_data.all_protocols():
                 for port in host_data[proto].keys():
                     port_data = host_data[proto][port]
                     
-                    # Store port information
-                    port_info = {
-                        'port': port,
-                        'protocol': proto,
-                        'state': port_data.get('state', 'unknown'),
-                        'service': port_data.get('name', 'unknown'),
-                        'version': port_data.get('version', 'unknown')
-                    }
-                    host_entry['open_ports'].append(port_info)
-                    
                     # Store vulnerability information from port scripts
                     if 'script' in port_data:
                         for script_name, output in port_data['script'].items():
                             vuln_info = {
-                                'type': 'port_script',
                                 'port': port,
+                                'state': port_data.get('state', 'unknown'),
+                                'name': port_data.get('name', 'unknown'),
+                                'version': port_data.get('version', 'unknown'),
                                 'script_name': script_name,
-                                'output': output
+                                'output': output,
+                                'ifVulnerable': output.find('EXPLOIT') != -1
                             }
-                            host_entry['vulnerabilities'].append(vuln_info)
+                            new_services.append(vuln_info)
             
-            # Store host script results
-            if hasattr(scanner[target], 'hostscript'):
-                for script_result in scanner[target].hostscript():
-                    host_script = {
-                        'id': script_result['id'],
-                        'output': script_result['output']
-                    }
-                    host_entry['host_scripts'].append(host_script)
+            # Update the host entry with new services
+            print(new_services)
+            hosts[host_index]['services'] = new_services
+            print(hosts)
+            hosts[host_index]['scan_time'] = datetime.now().isoformat()
             
             # Print summary
             print(f"\n[+] Vulnerability scan completed for {target}")
-            print(f"[+] Found {len(host_entry['vulnerabilities'])} vulnerability indicators")
-            print(f"[+] Found {len(host_entry['open_ports'])} open ports")
+            print(f"[+] Found {len(new_services)} services with potential vulnerabilities")
             
         else:
             print(f"[!] No scan data found for host {target}")
@@ -187,37 +171,3 @@ def get_hosts() -> List[Dict]:
         List[Dict]: List of host dictionaries
     """
     return hosts
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Network Scanner and Vulnerability Assessment')
-    subparsers = parser.add_subparsers(dest='command', help='Commands')
-    
-    # Network scan parser
-    network_parser = subparsers.add_parser('network', help='Perform fast network scan')
-    network_parser.add_argument('network', help='Network address (e.g., 192.168.1.0/24)')
-    
-    # Vulnerability scan parser
-    vuln_parser = subparsers.add_parser('vuln', help='Perform vulnerability scan')
-    vuln_parser.add_argument('target', help='Target IP or hostname')
-    vuln_parser.add_argument('-p', '--ports', help='Port specification (default: common ports)')
-    
-    # Save results parser
-    save_parser = subparsers.add_parser('save', help='Save results to file')
-    save_parser.add_argument('filename', help='File to save results to')
-    
-    # Load results parser
-    load_parser = subparsers.add_parser('load', help='Load results from file')
-    load_parser.add_argument('filename', help='File to load results from')
-    
-    args = parser.parse_args()
-    
-    if args.command == 'network':
-        fast_network_scan(args.network)
-    elif args.command == 'vuln':
-        run_vuln_scan(args.target, args.ports)
-    elif args.command == 'save':
-        save_results(args.filename)
-    elif args.command == 'load':
-        load_results(args.filename)
-    else:
-        parser.print_help()

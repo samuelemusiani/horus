@@ -2,8 +2,8 @@
   <div class="border shadow-md bg-white  rounded-lg p-4 w-full">
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center">
-        <v-icon :class="[{'-rotate-90': !expanded}, 'hover:cursor-pointer']" name="md-expandmore-round" scale="1.5"
-                fill="gray" class="mr-2" @click.stop="expanded=!expanded"/>
+        <v-icon :class="[{ '-rotate-90': !expanded }, 'hover:cursor-pointer']" name="md-expandmore-round" scale="1.5"
+                fill="gray" class="mr-2" @click.stop="expanded = !expanded"/>
         <v-icon v-if="isVulnerable" name="md-error" fill="red" scale="1.5"/>
         <v-icon v-else name="bi-check-circle-fill" fill="green" scale="1.5"/>
         <h2 class="text-2xl font-bold text-gray-900 mx-2">{{ device.name }}</h2>
@@ -20,19 +20,20 @@
         <p class="text-gray-700"><strong>IP:</strong> {{ device.ip }}</p>
         <p class="text-gray-700"><strong>MAC:</strong> {{ device.mac }}</p>
       </div>
-      <ul class="flex gap-2 mt-3">
+      <ul class="flex gap-2 mt-3 flex-wrap">
         <li v-for="(service, index) in sortedServices" :key="index"
             :class="['px-4 py-2 rounded-lg mb-2 flex', service.ifVulnerable ? 'bg-red-100' : 'bg-green-50']">
-            <div>
-              <p class="text-gray-800"><strong>Service:</strong> {{ service.name }}</p>
-          <p class="text-gray-800"><strong>Port:</strong> {{ service.port }}</p>
-          <p class="text-gray-800"><strong>Vulnerable:</strong> {{ service.ifVulnerable ? 'Yes' : 'No' }}</p>
-            </div>
-            <div v-if="service.ifVulnerable" class="ml-8 flex flex-col items-center justify-center">
-              <button class="bg-red-400 p-3 rounded-lg" @click="openChat(service)">
-                <v-icon name="md-questionanswer" fill="white"/>
-              </button>
-            </div>
+          <div>
+            <p class="text-gray-800"><strong>Service:</strong> {{ service.name }}</p>
+            <p class="text-gray-800"><strong>Version:</strong> {{ service.version }}</p>
+            <p class="text-gray-800"><strong>Port:</strong> {{ service.port }}</p>
+            <p class="text-gray-800"><strong>Vulnerable:</strong> {{ service.ifVulnerable ? 'Yes' : 'No' }}</p>
+          </div>
+          <div class="ml-8 flex flex-col items-center justify-center">
+            <button :class="[service.ifVulnerable ? 'bg-red-400' : 'bg-green-400', 'p-3 rounded-lg']" @click="openChat(service)">
+              <v-icon name="md-questionanswer" fill="white"/>
+            </button>
+          </div>
         </li>
       </ul>
     </div>
@@ -51,14 +52,16 @@
             <li>Continue this process until the scan feature says it's no longer online in the results.</li>
           </ol>
           <div class="flex gap-2 align-center">
-            <button @click="scanDevice" class="bg-blue-500 text-white px-4 py-2 rounded mt-4"> 
-            <v-icon name="md-networkcheck" fill="white"/>
-            Scan
-          </button>
-          <div v-if="scanResult" :class="[scanResult === 'offline' ? 'text-emerald-500': 'text-red-500', 'mt-4 bg-gray-200 px-4 py-2 rounded']">Scan Result: <span
-              :class="['font-bold', 'text-lg']">{{
-              scanResult
-            }}</span></div>
+            <button @click="scanDevice" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">
+              <v-icon name="md-networkcheck" fill="white"/>
+              Scan
+            </button>
+            <div v-if="scanResult"
+                 :class="[scanResult === 'offline' ? 'text-emerald-500': 'text-red-500', 'mt-4 bg-gray-200 px-4 py-2 rounded']">
+              Scan Result: <span
+                :class="['font-bold', 'text-lg']">{{
+                scanResult
+              }}</span></div>
           </div>
         </div>
       </template>
@@ -93,7 +96,8 @@ export default {
             value.services.every(service =>
                 service.port &&
                 service.ifVulnerable !== undefined &&
-                service.name
+                service.name &&
+                service.version
             )
         );
       }
@@ -113,7 +117,7 @@ export default {
     },
     sortedServices() {
       return this.device.services.sort((a, b) => b.ifVulnerable - a.ifVulnerable);
-    }
+    },
   },
   methods: {
     openModal() {

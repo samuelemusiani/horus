@@ -24,27 +24,32 @@ app.add_middleware(
 
 global scan, is_scanning
 is_scanning = False
-scan = [{"name": "localhost", "ip": "127.0.0.1", "mac": "00:00:00:00:00:00", "services": []}, {"name": "iPhone di Mattia", "ip": "192.168.0.3", "mac": "00:00:00:00:00:00", "services": []}]
+with open("out.json", 'r') as file:
+    data = json.load(file)
+scan = data['scan']
 # scan = []
 
 
 @app.post("/start")
 def start_scan():
     # start the scan
-    global is_scanning
+    global is_scanning, scan
     if is_scanning:
         return {"status": "error", "message": "Already scanning"}
     is_scanning = True
     # Start the scan
-    fast_network_scan('192.168.1.0/24')
+    fast_network_scan('172.23.0.0/25')
 
     # Get the list of hosts
-    discovered_hosts = get_hosts()
+    tmp = get_hosts()
+    scan = tmp
 
     # Run vulnerability scan on each host
-    for host in discovered_hosts:
+    for host in tmp:
         run_vuln_scan(host['ip'])
+        scan = get_hosts()
 
+    is_scanning = False
     return {"message": "End"}
 
 
@@ -98,4 +103,4 @@ def chat(messages: List[Tuple[str, str]]):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
