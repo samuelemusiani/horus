@@ -60,9 +60,9 @@ def get_ssid():
             ssid = result.stdout.strip()
             return ssid if ssid else "Could not find SSID"
         else:
-            return None
-    except Exception as e:
-        return None
+            return "Ethernet"
+    except Exception:
+        return "Ethernet"
 
 @app.get("/isonline/{ip}")
 def is_online(ip: str):
