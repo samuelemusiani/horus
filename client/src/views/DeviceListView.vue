@@ -55,7 +55,6 @@ export default {
   },
   watch: {
     isScanning(newValue) {
-      console.log(newValue)
       if (newValue) {
         setTimeout(() => this.getScan(), 2000);
       }
