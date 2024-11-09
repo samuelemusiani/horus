@@ -1,5 +1,4 @@
 <template>
-
   <div class="w-screen flex flex-col items-center pb-8">
     <div class="flex flex-col w-screen items-center max-w-5xl p-4">
       <div v-if="isScanning">
@@ -8,8 +7,9 @@
           <p class="text-lg">Scan is still ongoing</p>
         </div>
       </div>
-      <div v-else>
-        <button @click="printPage" class="bg-blue-500 text-white px-4 py-2 rounded text-lg mt-4">
+      <div>
+        <button @click="printPage" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-lg mt-4">
+          <v-icon name="hi-document-download" scale="1.2"/>
           Download Report PDF
         </button>
       </div>
@@ -112,11 +112,19 @@ export default {
         this.$refs[`device-${device.ip}`][0].expanded = true;
       });
     },
+    collapseAllDropdowns() {
+      this.devices.forEach(device => {
+        this.$refs[`device-${device.ip}`][0].expanded = false;
+      });
+    },
     printPage() {
       this.expandAllDropdowns();
       setTimeout(() => {
         window.print();
-      }, 1000)
+        setTimeout(() => {
+          this.collapseAllDropdowns();
+        }, 100);
+      }, 1000);
     }
   },
   computed: {
