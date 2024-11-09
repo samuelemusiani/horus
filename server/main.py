@@ -21,7 +21,7 @@ app.add_middleware(
 
 global scan, is_scanning
 is_scanning = False
-scan = [{"ip": "127.0.0.1", "mac": "00:00:00:00:00:00", "services": []}, {"ip": "192.168.0.3", "mac": "00:00:00:00:00:00", "services": []}]
+scan = [{"name": "localhost", "ip": "127.0.0.1", "mac": "00:00:00:00:00:00", "services": []}, {"name": "iPhone di Mattia", "ip": "192.168.0.3", "mac": "00:00:00:00:00:00", "services": []}]
 # scan = []
 
 

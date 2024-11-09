@@ -59,6 +59,8 @@ export default {
       const response = await axios.get("http://localhost:8000/scan");
       this.isScanning = response.data.status;
       this.devices = JSON.parse(response.data.scan);
+      if (this.isScanning)
+        setTimeout(() => this.getScan(), 2000);
     }
   },
   computed: {

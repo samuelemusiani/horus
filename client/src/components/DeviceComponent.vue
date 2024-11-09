@@ -17,7 +17,7 @@
     </div>
     <div v-if="expanded">
       <p class="text-gray-700 mt-3 ml-2"><strong>MAC:</strong> {{ device.mac }}</p>
-      <ul class="flex gap-2 mt-3">
+      <ul class="flex gap-2 mt-3 flex-wrap">
         <li v-for="(service, index) in sortedServices" :key="index"
             :class="['px-4 py-2 rounded-lg mb-2', service.ifVulnerable ? 'bg-red-100' : 'bg-green-50']">
           <p class="text-gray-800"><strong>Service:</strong> {{ service.name }}</p>
