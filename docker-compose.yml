@@ -6,8 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    # depends_on:
-    #   dev1:
+    depends_on:
+      - phpadmin
+      - ssh-server
+      - samba
+      - dev1
 
     ports:
       - "8000:8000"

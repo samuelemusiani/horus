@@ -26,9 +26,7 @@ def fast_network_scan(network: str) -> None:
         print("[*] Performing ping sweep...")
         
         # -sn: Ping scan
-        # -n: No DNS resolution
-        # -T4: Aggressive timing template
-        scanner.scan(hosts=network, arguments='-sn -n')
+        scanner.scan(hosts=network, arguments='-sn')
         
         # Clear global hosts list before new scan
         global hosts
@@ -52,6 +50,7 @@ def fast_network_scan(network: str) -> None:
         print(f"[+] Found {len(hosts)} active hosts")
         
         for host in hosts:
+            print(host)
             print(f"Host: {host['ip']} ({host['hostname']})")
                 
     except Exception as e:
@@ -113,19 +112,21 @@ def run_vuln_scan(target: str, ports: str = None) -> None:
                             'product': port_data.get('product', 'unknown'),
                             'protocol': proto,
                             'script_results': [],
-                            'isVulnerable': False
+                            'ifVulnerable': False
                         }
 
                         # Add vulnerability script information if available
                         if 'script' in port_data:
                             script_results = []
                             for script_name, output in port_data['script'].items():
-                                # script_info = {
-                                #     'script_name': script_name,
-                                #     'output': output,
-                                #     'isVulnerable': output.find('EXPLOIT') != -1
-                                # }
-                                service_info['ifVulnerable'] = output.find('EXPLOIT') != -1
+                                print("script_name: ", script_name)
+                                print("OUTPUT: ", output)
+                                if output.find('EXPLOIT') != -1:
+                                    service_info['ifVulnerable'] = True
+
+                                print("service_info['ifVulnerable']: ", service_info['ifVulnerable'])
+                                if service_info['ifVulnerable']:
+                                    break
 
                             service_info['script_results'] = script_results
 

@@ -36,9 +36,14 @@ COPY server/ /app/server/
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
+ollama start llama3.2 & \n\
 python /app/server/main.py & \n\
 serve -s /app/client/dist -l 3000' > /app/start.sh && \
 chmod +x /app/start.sh
+
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+RUN ollama pull llama3.2
 
 # Expose ports
 EXPOSE 3000 8000
