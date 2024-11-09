@@ -20,10 +20,12 @@
         <hr class="flex-1">
       </div>
       <main class="flex flex-col w-full h-full items-center gap-2 mt-8">
-        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" />
+        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" @open-chat="openChat"/>
       </main>
     </div>
   </div>
+  <ChatComponent v-if="showChat" :initial-message="initialMessage" style="position: fixed; bottom: 20px; right: 20px;"
+                 @close="closeChat"/>
 </template>
 
 <script>
@@ -31,15 +33,19 @@ import DeviceComponent from "@/components/DeviceComponent.vue";
 import axios from "axios";
 import Loader from "@/components/Loader.vue";
 import ReportComponent from "@/components/ReportComponent.vue";
+import ChatComponent from "@/components/ChatComponent.vue";
 
 export default {
   components: {
     Loader,
     DeviceComponent,
-    ReportComponent
+    ReportComponent,
+    ChatComponent
   },
   data() {
     return {
+      showChat: false,
+      initialMessage: [],
       devices: [],
       isScanning: false
     }
@@ -60,9 +66,15 @@ export default {
       const response = await axios.get("http://localhost:8000/scan");
       this.isScanning = response.data.status;
       this.devices = JSON.parse(response.data.scan);
-      if (this.isScanning) {
+      if (this.isScanning)
         setTimeout(() => this.getScan(), 2000);
-      }
+    },
+    openChat(service) {
+      this.initialMessage = ['user', `Explain to me what ${service.name} is.`];
+      this.showChat = true;
+    },
+    closeChat() {
+      this.showChat = false;
     }
   },
   computed: {
@@ -74,7 +86,7 @@ export default {
       });
     }
   }
-};
+}
 
 </script>
 

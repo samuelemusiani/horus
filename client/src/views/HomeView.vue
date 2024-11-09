@@ -7,7 +7,8 @@
         <h1 class="text-6xl font-black">Horus</h1>
       </div>
       <div class="flex justify-center items-center gap-2 px-6 py-2 rounded-r-full rounded-l-full bg-gray-500 text-white">
-        <v-icon id="wifi-icon" name="io-wifi" scale="1.75"/>
+        <v-icon v-if="networkName==='Ethernet'" id="cable-icon" name="md-cable" scale="1.75"/>
+        <v-icon v-else id="wifi-icon" name="io-wifi" scale="1.75"/>
         <h3 class="text-xl"> {{ networkName }} </h3>
       </div>
       <button class="hover:cursor-pointer bg-black rounded-r-full rounded-l-full text-white px-10 py-4 mt-20 pulse font-bold text-xl" @click.stop="startScan">
@@ -34,7 +35,7 @@ export default {
   data() {
     return {
       eyeIcon,
-      networkName: "Network Name",
+      networkName: "",
       displayLoader: false,
       router: useRouter()
     };
