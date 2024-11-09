@@ -4,9 +4,14 @@
 
 # Horus
 
-Horus is a network scanner that identifies devices on a network and checks for vulnerabilities, made for NOI Hackathon SFSCON Edition 2024.  
-The end user should be a normal user that wants to check the devices on his network for vulnerabilities and can see cli tools results such as nmap displayed in a user-friendly interface.   
-Other important functions are "Find my device", which can help the user to understand which devise has a certain IP and a chatbot who can help the user to understand the vulnerabilities found.
+**Horus** is a _network scanner_ designed to identify devices on a network and detect vulnerabilities, developed for the NOI Hackathon SFSCON Edition 2024.  
+It’s perfect for users who prefer a graphical interface over command-line tools and want an easy way to check for vulnerabilities in their networked devices. With Horus, results from command-line tools like nmap are presented in a user-friendly, clear and easy-to-understand dashboard.
+
+Key features include "Find My Device," which helps users identify the device associated with a specific IP address, and a chatbot that can explain the services running on the network and any vulnerabilities that are detected.
+
+Horus is also incredibly easy to install and use, making it a great choice for both novice and experienced users who want to quickly assess the security of their network.
+
+The name "Horus" was chosen for this network scanner because it is inspired by the ancient Egyptian god Horus, who was often depicted as a protector and guardian. Just as Horus watched over and safeguarded Egypt, this tool is designed to safeguard your network by detecting and addressing vulnerabilities, ensuring your devices are protected from potential threats.
 
 ## Features
 
