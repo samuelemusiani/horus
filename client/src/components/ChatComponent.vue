@@ -12,7 +12,7 @@
                     class="w-full flex">
                     <div
                         :class="['w-4/5 p-3 rounded-lg text-md text-gray-700 shadow-md flex flex-col', { 'bg-white': msg[0] === 'assistant', 'bg-blue-200': msg[0] !== 'assistant' }]">
-                        <span v-if="msg[1].length === 0" class="loader"></span>
+                        <span v-if="msg[1].length === 0" class="loader-chat"></span>
                         <span v-else v-html="renderMarkdown(msg[1])"></span>
                     </div>
                 </div>
@@ -90,14 +90,14 @@ export default {
     border: 1px solid #ccc;
 }
 
-.loader {
+.loader-chat {
     animation: rotate 1s infinite;
     height: 30px;
     width: 30px;
 }
 
-.loader:before,
-.loader:after {
+.loader-chat:before,
+.loader-chat:after {
     border-radius: 50%;
     content: "";
     display: block;
@@ -105,14 +105,14 @@ export default {
     width: 15px;
 }
 
-.loader:before {
+.loader-chat:before {
     animation: ball1 1s infinite;
     background-color: rgb(59 130 246);
     box-shadow: 30px 0 0 gray;
     margin-bottom: 10px;
 }
 
-.loader:after {
+.loader-chat:after {
     animation: ball2 1s infinite;
     background-color: rgb(59 130 246);
     box-shadow: 30px 0 0 gray;
