@@ -33,9 +33,3 @@ services:
     container_name: dev1
     # Keep the container running
     command: tail -f /dev/null
-
-  dev2:
-    image: alpine
-    container_name: dev2
-    # Keep the container running
-    command: tail -f /dev/null

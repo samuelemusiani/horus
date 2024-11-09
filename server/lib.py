@@ -28,7 +28,7 @@ def fast_network_scan(network: str) -> None:
         # -sn: Ping scan
         # -n: No DNS resolution
         # -T4: Aggressive timing template
-        scanner.scan(hosts=network, arguments='-sn -n -T4')
+        scanner.scan(hosts=network, arguments='-sn -n')
         
         # Clear global hosts list before new scan
         global hosts
@@ -60,7 +60,7 @@ def fast_network_scan(network: str) -> None:
 def run_vuln_scan(target: str, ports: str = None) -> None:
     """
     Run vulnerability scan against specified target and update global hosts array
-    
+
     Args:
         target (str): Target IP or hostname
         ports (str): Port specification (default: common ports)
@@ -68,69 +68,81 @@ def run_vuln_scan(target: str, ports: str = None) -> None:
     try:
         # Initialize scanner
         scanner = nmap.PortScanner()
-        
+
         # Convert localhost to IP if needed
         if target.lower() in ['localhost', 'local']:
             target = '127.0.0.1'
-            
+
         # Build scan arguments
-        arguments = '-sV --script vuln'
-        if ports:
-            arguments += f' -p{ports}'
-            
+        arguments = '-Pn -sV --script vuln -p 22,80,443,3000,139,445'
+
         print(f"[*] Starting vulnerability scan of {target} at {datetime.now()}")
         print("[*] This may take several minutes...")
-        
+
         # Run the scan
         scanner.scan(target, arguments=arguments)
-        
+
         # Find the host entry in our global hosts list
         global hosts
         host_index = next((index for index, host in enumerate(hosts) if host['ip'] == target), None)
-        
+
         if host_index is None:
             print(f"[!] Host {target} not found in scanned hosts list")
             return
-        
+
         # Update scan information
         if target in scanner.all_hosts():
             host_data = scanner[target]
-            
+
             # Create new services list for this scan
             new_services = []
-            
+
             # Collect port and vulnerability information
             for proto in host_data.all_protocols():
+                print("host_data: ", host_data[proto])
                 for port in host_data[proto].keys():
                     port_data = host_data[proto][port]
-                    
-                    # Store vulnerability information from port scripts
-                    if 'script' in port_data:
-                        for script_name, output in port_data['script'].items():
-                            vuln_info = {
-                                'port': port,
-                                'state': port_data.get('state', 'unknown'),
-                                'name': port_data.get('name', 'unknown'),
-                                'version': port_data.get('version', 'unknown'),
-                                'script_name': script_name,
-                                'output': output,
-                                'ifVulnerable': output.find('EXPLOIT') != -1
-                            }
-                            new_services.append(vuln_info)
-            
+
+                    # Create base service info for any open port
+                    if port_data.get('state') == 'open':
+                        service_info = {
+                            'port': port,
+                            'state': port_data.get('state', 'unknown'),
+                            'name': port_data.get('name', 'unknown'),
+                            'version': port_data.get('version', 'unknown'),
+                            'product': port_data.get('product', 'unknown'),
+                            'protocol': proto,
+                            'script_results': [],
+                            'isVulnerable': False
+                        }
+
+                        # Add vulnerability script information if available
+                        if 'script' in port_data:
+                            script_results = []
+                            for script_name, output in port_data['script'].items():
+                                # script_info = {
+                                #     'script_name': script_name,
+                                #     'output': output,
+                                #     'isVulnerable': output.find('EXPLOIT') != -1
+                                # }
+                                service_info['ifVulnerable'] = output.find('EXPLOIT') != -1
+
+                            service_info['script_results'] = script_results
+
+                        new_services.append(service_info) 
+
             # Update the host entry with new services
             print(new_services)
             hosts[host_index]['services'] = new_services
-            print(hosts)
             hosts[host_index]['scan_time'] = datetime.now().isoformat()
-            
+
             # Print summary
             print(f"\n[+] Vulnerability scan completed for {target}")
             print(f"[+] Found {len(new_services)} services with potential vulnerabilities")
-            
+
         else:
             print(f"[!] No scan data found for host {target}")
-            
+
     except Exception as e:
         print(f"[!] An error occurred during vulnerability scan: {str(e)}")
 
