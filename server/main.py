@@ -24,8 +24,9 @@ app.add_middleware(
 
 global scan, is_scanning
 is_scanning = False
-scan = [{"name": "localhost", "ip": "127.0.0.1", "mac": "00:00:00:00:00:00", "services": []}, {"name": "iPhone di Mattia", "ip": "192.168.0.3", "mac": "00:00:00:00:00:00", "services": []}]
-
+with open("out.json", 'r') as file:
+    data = json.load(file)
+scan = data['scan']
 # scan = []
 
 
@@ -42,7 +43,6 @@ def start_scan():
     # Get the list of hosts
     tmp = get_hosts()
     scan = tmp
-    print("Host getted: ", get_hosts())
 
     # Run vulnerability scan on each host
     for host in tmp:
