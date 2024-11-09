@@ -1,12 +1,19 @@
 <template>
+
   <div class="w-screen flex flex-col items-center pb-8">
     <div class="flex flex-col w-screen items-center max-w-5xl p-4">
+      <div v-if="isScanning">
+        <div class="flex gap-6 justify-center items-center">
+          <span class="loader"></span>
+          <p class="text-lg">Scan is still ongoing</p>
+        </div>
+      </div>
       <div class="flex w-full mt-10 items-end">
         <h1 class=" text-4xl font-black">Report</h1>
         <hr>
       </div>
       <div class="flex w-full gap-4">
-        <ReportComponent :devices="devices" />
+        <ReportComponent :devices="devices"/>
       </div>
       <div class="flex w-full mt-12 items-end">
         <h1 class="flex-2 text-4xl font-black">Found devices</h1>
@@ -22,44 +29,44 @@
 
 <script>
 import DeviceComponent from "@/components/DeviceComponent.vue";
+import axios from "axios";
+import Loader from "@/components/Loader.vue";
 import ReportComponent from "@/components/ReportComponent.vue";
 import ChatComponent from "@/components/ChatComponent.vue";
 
 export default {
   components: {
+    Loader,
     DeviceComponent,
     ReportComponent,
     ChatComponent
   },
   data() {
     return {
-      devices: [
-        {
-          id: 1,
-          name: "Device 1",
-          ip: "192.168.1.1",
-          mac: "00:1A:2B:3C:4D:5E",
-          services: [
-            { port: 80, ifVulnerable: false, name: "HTTP" },
-            { port: 22, ifVulnerable: false, name: "SSH" }
-          ]
-        },
-        {
-          id: 2,
-          name: "Device 2",
-          ip: "192.168.1.2",
-          mac: "00:1A:2B:3C:4D:5F",
-          services: [
-            { port: 443, ifVulnerable: true, name: "HTTPS" },
-            { port: 21, ifVulnerable: false, name: "FTP" }
-          ]
-        }
-      ],
       showChat: false,
       initialMessage: []
+      devices: [],
+      isScanning: false
+    }
+  },
+  mounted() {
+    this.getScan();
+  },
+  watch: {
+    isScanning(newValue) {
+      if (newValue) {
+        setTimeout(() => this.getScan(), 2000);
+      }
     }
   },
   methods: {
+    async getScan() {
+      const response = await axios.get("http://localhost:8000/scan");
+      this.isScanning = response.data.status;
+      this.devices = JSON.parse(response.data.scan);
+      if (this.isScanning)
+        setTimeout(() => this.getScan(), 2000);
+    }
     openChat(service){
       this.initialMessage = ['user', `Explain to me what ${service.name} is.`];
       this.showChat = true;

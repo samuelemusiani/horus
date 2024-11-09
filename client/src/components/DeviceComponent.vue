@@ -41,7 +41,7 @@
         <h3 class="text-lg font-bold text-gray-700">Find The Device (IP: {{ device.ip }})</h3>
       </template>
       <template v-slot:body>
-        <Loader :messages="['Contacting the server...']" class="py-16" v-if="loading"/>
+        <Loader :messages="['Contacting the server...']" class="w-full py-16" v-if="loading"/>
         <div v-else>
           <ol class="list-decimal list-inside space-y-2">
             <li>Make a list of all the devices that could potentially be the one you're looking for.</li>

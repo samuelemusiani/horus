@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full w-full flex flex-col justify-center items-center">
+    <div class="h-full flex flex-col justify-center items-center">
         <div class="flex flex-col justify-center items-center gap-6">
             <span class="loader"></span>
             <div class="text-2xl font-medium text-gray-700" id="loader-message">{{ activ }}</div>
@@ -64,7 +64,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .loader {
   width: 60px;
   height: 60px;

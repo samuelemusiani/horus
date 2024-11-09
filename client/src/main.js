@@ -8,10 +8,10 @@ import router from './router'
 
 import { OhVueIcon, addIcons } from "oh-vue-icons";
 import {IoCloseCircle, IoWifi, BiCheckCircle, MdError, 
-    MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck} from "oh-vue-icons/icons";
+    MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck, MdCable} from "oh-vue-icons/icons";
 
 addIcons(IoCloseCircle, IoWifi, BiCheckCircle, MdError,
-    MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck);
+    MdQuestionanswer, BiCheckCircleFill, MdExpandmoreRound, MdSearch, MdNetworkcheck, MdCable);
 
 const app = createApp(App)
 app.component("v-icon", OhVueIcon);
