@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  horus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # depends_on:
+    #   dev1:
+
+    ports:
+      - "8000:8000"
+      - "3000:3000"
+
+  phpadmin:
+    image: vulhub/phpmyadmin:4.4.15.6
+    container_name: phpmyadmin
+
+  ssh-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-debian
+
+    container_name: debian
+
+  samba:
+    image: vulhub/samba:4.6.3
+    container_name: samba
+
+  dev1:
+    image: alpine
+    container_name: dev1
+    # Keep the container running
+    command: tail -f /dev/null
+
+  dev2:
+    image: alpine
+    container_name: dev2
+    # Keep the container running
+    command: tail -f /dev/null

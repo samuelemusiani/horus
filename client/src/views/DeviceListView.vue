@@ -13,7 +13,7 @@
         <hr>
       </div>
       <div class="flex w-full gap-4">
-        <ReportComponent :devices="devices"/>
+        <ReportComponent :devices="devices" />
       </div>
       <div class="flex w-full mt-12 items-end">
         <h1 class="flex-2 text-4xl font-black">Found devices</h1>
@@ -55,6 +55,7 @@ export default {
   },
   watch: {
     isScanning(newValue) {
+      console.log(newValue)
       if (newValue) {
         setTimeout(() => this.getScan(), 2000);
       }

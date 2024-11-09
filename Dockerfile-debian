@@ -1,0 +1,28 @@
+FROM debian:stable-slim
+
+# Install OpenSSH Server and required packages
+RUN apt-get update && \
+    apt-get install -y openssh-server && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create required directories
+RUN mkdir -p /run/sshd
+
+# Generate host keys
+RUN ssh-keygen -A
+
+# Create SSH config directory
+RUN mkdir -p /root/.ssh
+
+# Create a secure sshd_config
+RUN echo "Port 22" >> /etc/ssh/sshd_config && \
+    echo "PermitRootLogin prohibit-password" >> /etc/ssh/sshd_config && \
+    echo "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
+    echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
+
+# Expose SSH port
+EXPOSE 22
+
+# Start SSH server
+CMD ["/usr/sbin/sshd", "-D"]
