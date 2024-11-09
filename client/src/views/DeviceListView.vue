@@ -13,20 +13,23 @@
         <hr class="flex-1">
       </div>
       <main class="flex flex-col w-full h-full items-center gap-2 mt-8">
-        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" />
+        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" @open-chat="openChat"/>
       </main>
     </div>
   </div>
+  <ChatComponent v-if="showChat" :initial-message="initialMessage" style="position: fixed; bottom: 20px; right: 20px;" @close="closeChat" />
 </template>
 
 <script>
 import DeviceComponent from "@/components/DeviceComponent.vue";
 import ReportComponent from "@/components/ReportComponent.vue";
+import ChatComponent from "@/components/ChatComponent.vue";
 
 export default {
   components: {
     DeviceComponent,
-    ReportComponent
+    ReportComponent,
+    ChatComponent
   },
   data() {
     return {
@@ -51,9 +54,20 @@ export default {
             { port: 21, ifVulnerable: false, name: "FTP" }
           ]
         }
-      ]
+      ],
+      showChat: false,
+      initialMessage: []
     }
   },
+  methods: {
+    openChat(service){
+      this.initialMessage = ['user', `Explain to me what ${service.name} is.`];
+      this.showChat = true;
+    },
+    closeChat(){
+      this.showChat = false;
+  }
+},
   computed: {
     sortedDevices() {
       return this.devices.sort((a, b) => {
@@ -63,7 +77,7 @@ export default {
       });
     }
   }
-};
+}
 
 </script>
 
