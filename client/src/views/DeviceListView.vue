@@ -8,6 +8,11 @@
           <p class="text-lg">Scan is still ongoing</p>
         </div>
       </div>
+      <div v-else>
+        <button @click="printPage" class="bg-blue-500 text-white px-4 py-2 rounded text-lg mt-4">
+          Download Report PDF
+        </button>
+      </div>
       <div class="flex w-full mt-10 items-end">
         <h1 class=" text-4xl font-black">Report</h1>
         <hr>
@@ -20,7 +25,8 @@
         <hr class="flex-1">
       </div>
       <main class="flex flex-col w-full h-full items-center gap-2 mt-8">
-        <DeviceComponent v-for="device in sortedDevices" :key="device.id" :device="device" @open-chat="openChat"/>
+        <DeviceComponent v-for="device in sortedDevices" :key="device.ip" :device="device" @open-chat="openChat"
+                         :ref="`device-${device.ip}`"/>
       </main>
     </div>
   </div>
@@ -74,6 +80,17 @@ export default {
     },
     closeChat() {
       this.showChat = false;
+    },
+    expandAllDropdowns() {
+      this.devices.forEach(device => {
+        this.$refs[`device-${device.ip}`][0].expanded = true;
+      });
+    },
+    printPage() {
+      this.expandAllDropdowns();
+      setTimeout(() => {
+        window.print();
+      }, 1000)
     }
   },
   computed: {
