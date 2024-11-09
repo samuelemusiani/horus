@@ -13,7 +13,7 @@
         <hr>
       </div>
       <div class="flex w-full gap-4">
-        <ReportComponent :devices="devices" />
+        <ReportComponent :devices="filteredDevices"/>
       </div>
       <div class="flex w-full mt-12 items-end">
         <h1 class="flex-2 text-4xl font-black">Found devices</h1>
@@ -79,10 +79,25 @@ export default {
   },
   computed: {
     sortedDevices() {
-      return this.devices.sort((a, b) => {
+      return this.filteredDevices.sort((a, b) => {
         const aVulnerable = a.services.some(service => service.ifVulnerable);
         const bVulnerable = b.services.some(service => service.ifVulnerable);
         return bVulnerable - aVulnerable;
+      });
+    },
+    filteredDevices() {
+      return this.devices.map(device => {
+        const uniqueServices = new Map();
+        device.services.forEach(service => {
+          const key = `${service.name}-${service.port}-${service.version}`;
+          if (!uniqueServices.has(key) || service.ifVulnerable) {
+            uniqueServices.set(key, service);
+          }
+        });
+        return {
+          ...device,
+          services: Array.from(uniqueServices.values())
+        };
       });
     }
   }

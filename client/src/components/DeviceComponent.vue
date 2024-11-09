@@ -29,8 +29,8 @@
             <p class="text-gray-800"><strong>Port:</strong> {{ service.port }}</p>
             <p class="text-gray-800"><strong>Vulnerable:</strong> {{ service.ifVulnerable ? 'Yes' : 'No' }}</p>
           </div>
-          <div v-if="service.ifVulnerable" class="ml-8 flex flex-col items-center justify-center">
-            <button class="bg-red-400 p-3 rounded-lg" @click="openChat(service)">
+          <div class="ml-8 flex flex-col items-center justify-center">
+            <button :class="[service.ifVulnerable ? 'bg-red-400' : 'bg-green-400', 'p-3 rounded-lg']" @click="openChat(service)">
               <v-icon name="md-questionanswer" fill="white"/>
             </button>
           </div>
@@ -117,7 +117,7 @@ export default {
     },
     sortedServices() {
       return this.device.services.sort((a, b) => b.ifVulnerable - a.ifVulnerable);
-    }
+    },
   },
   methods: {
     openModal() {
